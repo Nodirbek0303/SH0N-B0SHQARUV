@@ -63,11 +63,3 @@ CREATE POLICY "authenticated_select_transactions" ON transactions FOR SELECT TO 
 CREATE POLICY "authenticated_insert_transactions" ON transactions FOR INSERT TO authenticated WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'club_role') = 'staff');
 CREATE POLICY "authenticated_update_transactions" ON transactions FOR UPDATE TO authenticated USING ((auth.jwt() -> 'app_metadata' ->> 'club_role') = 'staff') WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'club_role') = 'staff');
 CREATE POLICY "authenticated_delete_transactions" ON transactions FOR DELETE TO authenticated USING ((auth.jwt() -> 'app_metadata' ->> 'club_role') = 'staff');
-
-INSERT INTO products (name, price, stock) VALUES
-  ('Coca-Cola', 15000, 45), ('Chips', 12000, 32), ('Suv', 8000, 50), ('Snickers', 14000, 28)
-ON CONFLICT (name) DO NOTHING;
-INSERT INTO computers (name, status) VALUES
-  ('PC-1', 'free'), ('PC-2', 'free'), ('PC-3', 'free'), ('PC-4', 'free'), ('PC-5', 'free'),
-  ('PC-6', 'free'), ('PC-7', 'free'), ('PC-8', 'free'), ('PC-9', 'busy'), ('PC-10', 'broken')
-ON CONFLICT (name) DO NOTHING;
