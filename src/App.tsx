@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { Cloud, HardDrive, LogOut } from 'lucide-react';
+import { Cloud, HardDrive, KeyRound, LogOut } from 'lucide-react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { ComputersPage } from '@/components/dashboard/ComputersPage';
 import { DashboardPage } from '@/components/dashboard/DashboardPage';
@@ -61,11 +61,73 @@ function AuthPage({ initialError }: { initialError?: string }) {
   </main>;
 }
 
+function PasswordDialog({ onClose }: { onClose: () => void }) {
+  const [password, setPassword] = useState('');
+  const [confirmation, setConfirmation] = useState('');
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const updatePassword = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError('');
+    setMessage('');
+    if (password.length < 8) {
+      setError('Parol kamida 8 ta belgidan iborat bo‘lishi kerak.');
+      return;
+    }
+    if (password !== confirmation) {
+      setError('Parollar bir xil emas.');
+      return;
+    }
+    if (!supabase) {
+      setError('Supabase sozlanmagan.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { error: updateError } = await supabase.auth.updateUser({ password });
+      if (updateError) setError(updateError.message);
+      else {
+        setPassword('');
+        setConfirmation('');
+        setMessage('Parol muvaffaqiyatli o‘rnatildi. Keyingi safar shu parol bilan kiring.');
+      }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Parolni o‘rnatishda noma’lum xatolik yuz berdi.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return <div role="dialog" aria-modal="true" aria-labelledby="password-dialog-title" className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+    <form onSubmit={updatePassword} className="w-full max-w-md rounded-2xl border border-surface-600 bg-surface-800 p-6 shadow-2xl">
+      <div className="mb-5 flex items-center justify-between gap-4">
+        <h2 id="password-dialog-title" className="text-lg font-bold">Parolni o‘rnatish</h2>
+        <button type="button" onClick={onClose} className="rounded-lg px-3 py-1 text-slate-400 hover:bg-surface-700 hover:text-white">Yopish</button>
+      </div>
+      <label className="mb-4 block text-sm text-slate-300">Yangi parol
+        <input type="password" autoComplete="new-password" minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 w-full rounded-xl border border-surface-600 bg-surface-900 px-4 py-3 text-white outline-none focus:border-brand-400" />
+      </label>
+      <label className="mb-5 block text-sm text-slate-300">Parolni takrorlang
+        <input type="password" autoComplete="new-password" minLength={8} required value={confirmation} onChange={(event) => setConfirmation(event.target.value)} className="mt-2 w-full rounded-xl border border-surface-600 bg-surface-900 px-4 py-3 text-white outline-none focus:border-brand-400" />
+      </label>
+      {error && <p role="alert" className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</p>}
+      {message && <p role="status" className="mb-4 rounded-xl border border-success-500/30 bg-success-500/10 px-4 py-3 text-sm text-green-200">{message}</p>}
+      <button type="submit" disabled={isSubmitting} className="w-full rounded-xl bg-brand-500 px-4 py-3 font-semibold text-white transition-colors hover:bg-brand-400 disabled:cursor-wait disabled:opacity-60">
+        {isSubmitting ? 'Saqlanmoqda...' : 'Parolni saqlash'}
+      </button>
+    </form>
+  </div>;
+}
+
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activePage, setActivePage] = useState<AppPage>(() => pageFromHash(window.location.hash));
   const [auth, setAuth] = useState<AuthState>({ ready: !isSupabaseConfigured, user: null, error: null });
   const [signOutError, setSignOutError] = useState('');
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
 
   useEffect(() => {
     const syncPageWithHash = () => setActivePage(pageFromHash(window.location.hash));
@@ -115,6 +177,9 @@ function App() {
           {isSupabaseConfigured ? <Cloud className="h-3.5 w-3.5 text-success-400" /> : <HardDrive className="h-3.5 w-3.5 text-success-400" />}
           {isSupabaseConfigured ? 'Supabase bulut rejimi' : 'Lokal rejim'}
         </span>
+        {auth.user && <button type="button" onClick={() => setShowPasswordDialog(true)} className="flex items-center gap-2 rounded-full border border-surface-600 bg-surface-800/70 px-3 py-1.5 text-xs text-slate-300 hover:bg-surface-700">
+          <KeyRound className="h-3.5 w-3.5" />Parol o‘rnatish
+        </button>}
         {auth.user && <button type="button" onClick={async () => {
           if (!supabase) return;
           setSignOutError('');
@@ -130,6 +195,7 @@ function App() {
       {activePage === 'computers' && <ComputersPage />}
       {activePage === 'products' && <ProductsPage />}
     </div>
+    {showPasswordDialog && <PasswordDialog onClose={() => setShowPasswordDialog(false)} />}
   </div>;
 }
 
