@@ -12,6 +12,8 @@ In local mode, the app starts with zero transactions and cash, a catalog of comm
 
 The menu separates the home dashboard, reports, computer management, and product/stock management. They are available at `/#`, `/#reports`, `/#computers`, and `/#products`; direct links, refreshes, and browser back/forward navigation stay in sync.
 
+Use **PDF yuklab olish** from the dashboard, reports, computers, or products page to print/export the complete products, inventory, computers, computer sessions, and transaction history. The report is assembled in the browser and is not uploaded or saved on Vercel/Supabase; in the browser print dialog choose **Save as PDF**. Downloading a report does not delete the live database records.
+
 Without Supabase environment variables, data is stored only in the current browser profile. With Supabase configured, signed-in staff share data across devices. Existing browser-local data is not automatically copied to Supabase, and this setup does not include a local-history importer. Keep the existing browser profile and its data until you have separately transferred any records you need.
 
 ## Deploy with Supabase and Vercel

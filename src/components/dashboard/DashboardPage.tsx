@@ -20,7 +20,7 @@ export function DashboardPage() {
   const stats = useMemo(() => data ? computeDashboardStats(data.transactions, data.products, new Date()) : null, [data]);
 
   return <main className="min-w-0 flex-1 overflow-y-auto px-4 pb-8 pt-20 sm:px-6 lg:px-8 lg:pt-6">
-    <TopBar query={query} onQueryChange={setQuery} />
+    <TopBar query={query} onQueryChange={setQuery} data={data} />
     {isLoading && <div className="flex items-center justify-center gap-3 py-24 text-slate-400"><Loader2 className="h-5 w-5 animate-spin" /><span>Ma'lumotlar yuklanmoqda...</span></div>}
     {!isLoading && !data && error && <div className="flex flex-col items-center gap-4 rounded-2xl border border-danger-500/30 bg-danger-500/10 px-6 py-16 text-center"><p className="text-sm text-danger-300">{error}</p><p className="max-w-xl text-xs text-slate-400">Bulut ma’lumotlarini yuklab bo‘lmadi. Internet aloqasi va hisob ruxsatlarini tekshirib, qayta urinib ko‘ring.</p><button type="button" onClick={reload} disabled={isRefreshing} className="flex items-center gap-2 rounded-xl bg-surface-700 px-4 py-2.5 text-sm font-medium text-slate-100 hover:bg-surface-600 disabled:opacity-50"><RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />Qayta urinish</button></div>}
     {data && error && <div role="status" className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-warning-400/20 bg-warning-400/10 px-4 py-3 text-sm text-warning-400"><span>{error} Oldingi ma'lumotlar ko'rsatilmoqda.</span><button type="button" onClick={reload} disabled={isRefreshing} className="shrink-0 font-semibold underline">Yangilash</button></div>}

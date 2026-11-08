@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowDownRight, ArrowUpRight, BarChart3, Loader2, Monitor } from 'lucide-react';
 import { Panel } from '@/components/ui/Panel';
 import { RecentOperations } from '@/components/dashboard/RecentOperations';
+import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton';
 import { useClubData } from '@/hooks/useClubData';
 import { computeReportStats, formatDateKey } from '@/lib/reportStats';
 import { formatCount, formatSom } from '@/lib/format';
@@ -52,7 +53,7 @@ export function ReportsPage() {
     {error && <p role="alert" className="mb-4 rounded-xl bg-danger-500/10 p-4 text-sm text-danger-300">{error}</p>}
     {report && data && <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-300">SHON CLUB | TAHLIL</p><h1 className="mt-1 text-2xl font-bold text-slate-50">Hisobotlar</h1><p className="mt-1 text-sm text-slate-400">Davr natijalarini oldingi teng davr bilan solishtiring.</p></div>
-        <div className="grid grid-cols-2 gap-3 rounded-xl border border-surface-600 bg-surface-800/70 p-3"><label className="flex flex-col gap-1 text-xs text-slate-400">Boshlanish<input type="date" value={from} max={to || undefined} onChange={(event) => setFrom(event.target.value)} className="rounded-lg border border-surface-600 bg-surface-900 px-3 py-2 text-sm text-slate-100" /></label><label className="flex flex-col gap-1 text-xs text-slate-400">Tugash<input type="date" value={to} min={from || undefined} onChange={(event) => setTo(event.target.value)} className="rounded-lg border border-surface-600 bg-surface-900 px-3 py-2 text-sm text-slate-100" /></label></div>
+        <div className="flex flex-wrap items-end gap-3"><div className="grid grid-cols-2 gap-3 rounded-xl border border-surface-600 bg-surface-800/70 p-3"><label className="flex flex-col gap-1 text-xs text-slate-400">Boshlanish<input type="date" value={from} max={to || undefined} onChange={(event) => setFrom(event.target.value)} className="rounded-lg border border-surface-600 bg-surface-900 px-3 py-2 text-sm text-slate-100" /></label><label className="flex flex-col gap-1 text-xs text-slate-400">Tugash<input type="date" value={to} min={from || undefined} onChange={(event) => setTo(event.target.value)} className="rounded-lg border border-surface-600 bg-surface-900 px-3 py-2 text-sm text-slate-100" /></label></div><DownloadPdfButton data={data} /></div>
       </header>
 
       <p className="-mt-3 text-xs text-slate-500">Tanlangan davr: {safeFrom} - {safeTo}. Taqqoslash davri: {formatDateKey(report.previousFrom)} - {formatDateKey(new Date(report.previousTo.getFullYear(), report.previousTo.getMonth(), report.previousTo.getDate() - 1))}.</p>

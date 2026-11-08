@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Loader2, Package, RefreshCw } from 'lucide-react';
+import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton';
 import { ProductManager } from '@/components/dashboard/ProductManager';
 import { ProductMovementModal } from '@/components/dashboard/ProductMovementModal';
 import { ProductStock } from '@/components/dashboard/ProductStock';
@@ -28,7 +29,8 @@ export function ProductsPage() {
         <h1 className="mt-1 flex items-center gap-2 text-2xl font-bold text-slate-50"><Package className="h-6 w-6 text-brand-400" />Mahsulotlar</h1>
         <p className="mt-1 text-sm text-slate-400">Mahsulot qo‘shing yoki tahrirlang, sotuv va ombor harakatlarini kiriting.</p>
       </div>
-      {data && <div className="flex flex-wrap gap-2">
+      {data && <div className="flex flex-wrap items-center gap-2">
+        <DownloadPdfButton data={data} />
         <button type="button" onClick={() => openAction('sale')} className="rounded-xl bg-success-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-success-500">+ Sotuv</button>
         <button type="button" onClick={() => openAction('stock_opening')} className="rounded-xl border border-surface-600 bg-surface-800 px-4 py-2.5 text-sm font-semibold text-slate-100 hover:bg-surface-700">+ Omborga kirim</button>
         <button type="button" onClick={() => openAction('purchase')} className="rounded-xl border border-surface-600 bg-surface-800 px-4 py-2.5 text-sm font-semibold text-slate-100 hover:bg-surface-700">+ Tovar xaridi</button>
