@@ -90,6 +90,13 @@ export type Database = {
         };
         Returns: undefined;
       };
+      seed_club_defaults: {
+        Args: {
+          p_products: { name: string; price: number; cost_price: number; stock: number }[];
+          p_computers: { name: string }[];
+        };
+        Returns: undefined;
+      };
       set_computer_status: {
         Args: { p_computer_id: string; p_status: ComputerStatus };
         Returns: undefined;

@@ -22,7 +22,7 @@ Without Supabase environment variables, data is stored only in the current brows
 4. In the project root, copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to the project's URL and public anon/publishable key. These two frontend values are public; never use the service-role secret here.
 5. Import the repository into Vercel, add those same two environment variables for the required deployment environments, and deploy. Redeploy after changing environment variables.
 
-The migrations add the missing product cost, inventory audit, and computer session schema; secure write operations behind staff-only atomic RPCs; and enable realtime updates. The app seeds missing starter products and computers without replacing existing rows. Keep local mode available by leaving both Supabase variables unset; setting only one displays a configuration error instead of silently switching storage.
+The migrations add the missing product cost, inventory audit, and computer session schema; secure write operations behind staff-only atomic RPCs; and enable realtime updates. The app seeds missing starter products and computers through a staff-only RPC without replacing existing rows or granting direct table writes. Keep local mode available by leaving both Supabase variables unset; setting only one displays a configuration error instead of silently switching storage.
 
 ## Verify
 

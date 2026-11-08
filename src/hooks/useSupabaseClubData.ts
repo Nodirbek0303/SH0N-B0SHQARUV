@@ -43,28 +43,11 @@ export function useSupabaseClubData(enabled: boolean) {
     setIsRefreshing(true);
     try {
       const client = requireSupabase();
-      const [productNames, computerNames] = await Promise.all([
-        getAllPages((from, to) => client.from('products').select('name').order('name').range(from, to)),
-        getAllPages((from, to) => client.from('computers').select('name').order('name').range(from, to)),
-      ]);
-
-      const knownProducts = new Set(productNames.map((product) => product.name.trim().toLocaleLowerCase()));
-      const missingProducts = STARTER_PRODUCTS
-        .filter((product) => !knownProducts.has(product.name.toLocaleLowerCase()))
-        .map(({ name, price, cost_price, stock }) => ({ name, price, cost_price, stock }));
-      if (missingProducts.length) {
-        const { error: seedProductsError } = await client.from('products').upsert(missingProducts, { onConflict: 'name', ignoreDuplicates: true });
-        checkResult(seedProductsError);
-      }
-
-      const knownComputers = new Set(computerNames.map((computer) => computer.name.trim().toLocaleLowerCase()));
-      const missingComputers = DEFAULT_COMPUTERS
-        .filter((computer) => !knownComputers.has(computer.name.toLocaleLowerCase()))
-        .map(({ name }) => ({ name }));
-      if (missingComputers.length) {
-        const { error: seedComputersError } = await client.from('computers').upsert(missingComputers, { onConflict: 'name', ignoreDuplicates: true });
-        checkResult(seedComputersError);
-      }
+      const { error: seedError } = await client.rpc('seed_club_defaults', {
+        p_products: STARTER_PRODUCTS.map(({ name, price, cost_price, stock }) => ({ name, price, cost_price, stock })),
+        p_computers: DEFAULT_COMPUTERS.map(({ name }) => ({ name })),
+      });
+      checkResult(seedError);
 
       const [productRows, computerRows, transactionRows, sessionRows] = await Promise.all([
         getAllPages((from, to) => client.from('products').select('*').order('name').range(from, to)),
